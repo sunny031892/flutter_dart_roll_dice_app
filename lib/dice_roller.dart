@@ -27,11 +27,12 @@ class _DiceRollerState extends State<DiceRoller> {
         rolls.add(currentDiceRoll);
       });
 
-      if (rolls.length == 5) {
+      int totalScore = rolls.fold(0, (sum, element) => sum + element);
+      if (rolls.length == 5 || totalScore >= 20) {
         setState(() {
           gameEnded = true;
         });
-        bool isWin = rolls.fold(0, (sum, element) => sum + element) >= 20;
+        bool isWin = totalScore >= 20;
         Future.microtask(() => widget.onGameEnd?.call(isWin));
       }
     }
