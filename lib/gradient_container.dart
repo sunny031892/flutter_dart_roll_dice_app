@@ -5,18 +5,42 @@ import 'dice_roller.dart';
 const startAlignment = Alignment.topLeft;
 const endAlignment = Alignment.bottomRight;
 
-class GradientContainer extends StatelessWidget {
-  const GradientContainer(this.color1, this.color2, {super.key});
-
-  const GradientContainer.purple({super.key})
-      : color1 = Colors.deepPurple,
-        color2 = Colors.indigo;
-
-  final Color color1;
-  final Color color2;
+class GradientContainer extends StatefulWidget {
+  const GradientContainer({super.key});
 
   @override
-  Widget build(context) {
+  State<GradientContainer> createState() => _GradientContainerState();
+}
+
+class _GradientContainerState extends State<GradientContainer> {
+  Color color1 = Colors.deepPurple;
+  Color color2 = Colors.indigo;
+  String message = '';
+
+  void resetBackground() {
+    setState(() {
+      color1 = Colors.deepPurple;
+      color2 = Colors.indigo;
+      message = '';
+    });
+  }
+
+  void onGameEnd(bool isWin) {
+    setState(() {
+      if (isWin) {
+        color1 = Colors.lightGreen;
+        color2 = Colors.green;
+        message = 'You win!';
+      } else {
+        color1 = Colors.redAccent;
+        color2 = Colors.deepOrange;
+        message = 'You lose!';
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -25,8 +49,24 @@ class GradientContainer extends StatelessWidget {
           end: endAlignment,
         ),
       ),
-      child: const Center(
-        child: DiceRoller(),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            DiceRoller(
+              onGameEnd: onGameEnd,
+              onResetGame: resetBackground,
+            ), 
+            if (message.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  message,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
